@@ -1,35 +1,42 @@
-const express = require('express');
+const express= require('express');
 const app = express();
-const MongoClient = require('mongodb').MongoClient;
+const mongoose = require('mongoose');
+const bodyParser=require('body-parser');
+const { Int32 } = require('mongodb');
 
-const uri = 'mongodb+srv://suryagunji24:Surya2000@cluster0.uma9ypy.mongodb.net/?retryWrites=true&w=majority';
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+app.use(bodyParser.urlencoded({extended:true}))
+mongoose.connect("mongodb+srv://suryagunji24:Surya2000@cluster0.uma9ypy.mongodb.net/details",{useNewUrlparser:true});
 
-app.use(express.static('public'));
-app.use(express.urlencoded({ extended: true }));
-
-app.post('/submit', async (req, res) => {
-const { name, message } = req.body;
-
-try {
-await client.connect();
-const db = client.db('details');
-const collection = db.collection('notes');
-
-await collection.insertOne({ name, message });
-
-console.log('Data inserted into MongoDB');
-res.send('Data submitted successfully');
-} catch (error) {
-console.error('Failed to insert data into MongoDB', error);
-res.status(500).send('An error occurred');
+const notesSchema={
+    UserName : String,
+    UserMessage: String
 }
+
+const Note = mongoose.model("Note",notesSchema)
+
+app.get("/",function(req, res){
+    
+    res.sendFile(__dirname + "/index.html");
+})
+app.post("/",function(req , res){
+    let newNote = new Note({
+            UserName : req.body.UserName1,
+            UserMessage : req.body.UserMessage1
+        });
+newNote.save()
+res.redirect("/")
+    });
+
+app.listen( "3000 ",() => {
+    console.log("server is running in port 3000");
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-console.log(`Server listening on port ${PORT}`);
-});
+
+
+
+
+
+
 
 
 
