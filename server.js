@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const MongoClient = require('mongodb').MongoClient;
 
-const uri = 'mongodb+srv://suryagunji24:Surya2000@cluster0.uma9ypy.mongodb.net/dbcnc';
+const uri = 'mongodb+srv://suryagunji24:Surya2000@cluster0.uma9ypy.mongodb.net/?retryWrites=true&w=majority';
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 app.use(express.static('public'));
@@ -13,7 +13,7 @@ const { name, message } = req.body;
 
 try {
 await client.connect();
-const db = client.db('dbcnc');
+const db = client.db('details');
 const collection = db.collection('notes');
 
 await collection.insertOne({ name, message });
